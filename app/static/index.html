@@ -2,52 +2,291 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Catálogo de Productos</title>
   <style>
-    body { font-family: sans-serif; max-width: 640px; margin: 2rem auto; }
-    .msg { margin: 0.5rem 0; padding: 0.5rem; border-radius: 6px; }
-    .user { background: #e8f0fe; }
-    .assistant { background: #f1f3f4; }
-    .tools { font-size: 0.8rem; color: #555; }
-    .error { background: #fde8e8; }
+    :root {
+      --bg: #eef1f4;
+      --surface: #ffffff;
+      --ink: #14202b;
+      --muted: #566573;
+      --line: #d3dae1;
+      --tag: #ffd23f;
+      --tag-ink: #14202b;
+      --ok: #0f6b5c;
+      --ok-bg: #d9f0ea;
+      --off: #a3261b;
+      --off-bg: #fbe3e0;
+      --focus: #1d4ed8;
+      --user-bg: #dde7f5;
+      --bot-bg: #f2f4f7;
+      --font: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1720;
+        --surface: #17222e;
+        --ink: #e8eef4;
+        --muted: #9fb0bf;
+        --line: #2a3947;
+        --ok: #6fd6c0;
+        --ok-bg: #12332d;
+        --off: #ff9b90;
+        --off-bg: #3a1c19;
+        --focus: #8fb2ff;
+        --user-bg: #1f3350;
+        --bot-bg: #1d2a38;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: var(--font); line-height: 1.45;
+    }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+    header {
+      display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center;
+      justify-content: space-between; padding: 1rem 1.5rem;
+      background: var(--surface); border-bottom: 1px solid var(--line);
+    }
+    h1 { margin: 0; font-size: 1.35rem; letter-spacing: -0.01em; }
+    .key-field { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+    .key-field input { width: 16rem; max-width: 60vw; }
+    input[type="password"], input[type="text"] {
+      font: inherit; color: var(--ink); background: var(--bg);
+      border: 1px solid var(--line); border-radius: 6px; padding: 0.5rem 0.65rem;
+    }
+    button {
+      font: inherit; cursor: pointer; border-radius: 6px; padding: 0.5rem 0.9rem;
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    }
+    button:hover { border-color: var(--ink); }
+    .layout {
+      display: grid; gap: 1.25rem; padding: 1.25rem 1.5rem 2rem;
+      grid-template-columns: 11.5rem minmax(0, 1fr) 22rem; align-items: start;
+    }
+    .rail h2, .chat h2 { margin: 0 0 0.6rem; font-size: 1rem; }
+    .rail ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
+    .rail button {
+      width: 100%; display: flex; justify-content: space-between; text-align: left;
+      border-color: transparent; background: transparent;
+    }
+    .rail button[aria-pressed="true"] {
+      background: var(--ink); color: var(--bg); border-color: var(--ink);
+    }
+    .count { font-variant-numeric: tabular-nums; opacity: 0.7; }
+    .grid {
+      display: grid; gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    }
+    .status { grid-column: 1 / -1; color: var(--muted); padding: 1rem 0; }
+    .status.error { color: var(--off); font-weight: 600; }
+    .product-card {
+      display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    }
+    .product-card h3 { margin: 0; font-size: 1.05rem; }
+    .product-card .id { font-size: 0.8rem; color: var(--muted); }
+    .product-card p { margin: 0; color: var(--muted); font-size: 0.9rem; flex: 1; }
+    .price {
+      align-self: flex-start; background: var(--tag); color: var(--tag-ink);
+      font-weight: 800; font-size: 1.5rem; letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums; padding: 0.15rem 0.85rem 0.15rem 0.6rem;
+      clip-path: polygon(0 0, calc(100% - 0.55rem) 0, 100% 50%, calc(100% - 0.55rem) 100%, 0 100%);
+    }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.8rem; }
+    .badge { padding: 0.1rem 0.55rem; border-radius: 999px; background: var(--ok-bg); color: var(--ok); }
+    .badge.off { background: var(--off-bg); color: var(--off); }
+    .chat {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+      padding: 1rem; position: sticky; top: 1rem;
+    }
+    #conversation { max-height: 22rem; overflow-y: auto; min-height: 4rem; }
+    .msg { margin: 0.4rem 0; padding: 0.5rem 0.65rem; border-radius: 8px; font-size: 0.92rem; }
+    .user { background: var(--user-bg); }
+    .assistant { background: var(--bot-bg); }
+    .error { background: var(--off-bg); color: var(--off); }
+    .tools { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+    #form { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+    #question { flex: 1; min-width: 0; }
+    #send { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    @media (max-width: 1050px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+      .rail ul { grid-auto-flow: column; overflow-x: auto; }
+      .rail button { white-space: nowrap; gap: 0.5rem; }
+      .chat { position: static; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      button { transition: background-color 0.15s, border-color 0.15s; }
+    }
   </style>
 </head>
 <body>
-  <h1>Catálogo de Productos</h1>
-  <div data-testid="answer" id="conversation"></div>
-  <div class="tools" id="request-id" data-testid="request-id"></div>
-  <form id="form">
-    <input data-testid="api-key" id="api-key" type="password" size="30"
-           autocomplete="off" placeholder="Clave de acceso">
-    <br>
-    <input data-testid="question" id="question" type="text" size="50"
-           placeholder="Pregunta por un producto o una categoría">
-    <button data-testid="send" id="send" type="submit">Enviar</button>
-  </form>
+  <header>
+    <h1>Catálogo de Productos</h1>
+    <label class="key-field">Clave de acceso
+      <input data-testid="api-key" id="api-key" type="password"
+             autocomplete="off" placeholder="Escribe tu clave">
+    </label>
+  </header>
+
+  <div class="layout">
+    <nav class="rail" aria-label="Categorías">
+      <h2>Categorías</h2>
+      <ul id="categories" data-testid="category-filter"></ul>
+    </nav>
+
+    <main>
+      <div class="grid" id="grid" data-testid="catalog-grid">
+        <div class="status" id="status" data-testid="catalog-status" role="status">
+          Escribe tu clave para ver el catálogo.
+        </div>
+      </div>
+    </main>
+
+    <section class="chat" aria-label="Asistente">
+      <h2>Pregunta al asistente</h2>
+      <div data-testid="answer" id="conversation" aria-live="polite"></div>
+      <div class="tools" id="request-id" data-testid="request-id"></div>
+      <form id="form">
+        <input data-testid="question" id="question" type="text"
+               placeholder="Pregunta por un producto"
+               aria-label="Pregunta">
+        <button data-testid="send" id="send" type="submit">Enviar</button>
+      </form>
+    </section>
+  </div>
+
   <script>
     const history = [];
     const conversation = document.getElementById("conversation");
     const input = document.getElementById("question");
     const keyInput = document.getElementById("api-key");
+    const grid = document.getElementById("grid");
+    const categoriesList = document.getElementById("categories");
+    const money = new Intl.NumberFormat("es-MX",
+      {style: "currency", currency: "MXN", maximumFractionDigits: 0});
+    let allProducts = [];
+    let activeCategory = null;
+    let timer = null;
+
     // La clave solo vive en sessionStorage: se pierde al cerrar la pestaña.
     keyInput.value = sessionStorage.getItem("catalog-api-key") || "";
     keyInput.addEventListener("input", () => {
       sessionStorage.setItem("catalog-api-key", keyInput.value);
+      clearTimeout(timer);
+      timer = setTimeout(() => loadCatalog(true), 400);
     });
 
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function setStatus(text, isError) {
+      grid.replaceChildren();
+      const status = element("div", "status" + (isError ? " error" : ""), text);
+      status.id = "status";
+      status.setAttribute("data-testid", "catalog-status");
+      status.setAttribute("role", "status");
+      grid.appendChild(status);
+    }
+
+    function renderCategories(names) {
+      categoriesList.replaceChildren();
+      const entries = [[null, "Todas", allProducts.length]].concat(names.map(
+        (name) => [name, name, allProducts.filter((p) => p.category === name).length]
+      ));
+      for (const [value, label, count] of entries) {
+        const item = element("li");
+        const button = element("button");
+        button.type = "button";
+        button.setAttribute("aria-pressed", String(value === activeCategory));
+        button.appendChild(element("span", "", label));
+        button.appendChild(element("span", "count", String(count)));
+        button.addEventListener("click", () => {
+          activeCategory = value;
+          loadCatalog(false);
+        });
+        item.appendChild(button);
+        categoriesList.appendChild(item);
+      }
+    }
+
+    function renderProducts(products) {
+      grid.replaceChildren();
+      if (!products.length) {
+        setStatus("No hay productos en esta categoría.", false);
+        return;
+      }
+      for (const product of products) {
+        const card = element("article", "product-card");
+        card.setAttribute("data-testid", "product-card");
+        card.appendChild(element("h3", "", product.name));
+        card.appendChild(element("span", "id", product.id + " · " + product.category));
+        card.appendChild(element("p", "", product.description));
+        card.appendChild(element("div", "price", money.format(product.price_mxn)));
+        const badges = element("div", "badges");
+        const inStock = product.stock > 0;
+        badges.appendChild(element("span", "badge" + (inStock ? "" : " off"),
+          inStock ? product.stock + " en existencia" : "Agotado"));
+        if (product.status !== "activo") {
+          badges.appendChild(element("span", "badge off", "Descontinuado"));
+        }
+        card.appendChild(badges);
+        const ask = element("button", "", "Preguntar por este producto");
+        ask.type = "button";
+        ask.addEventListener("click", () => {
+          input.value = "¿Qué sabes de " + product.id + "?";
+          input.focus();
+        });
+        card.appendChild(ask);
+        grid.appendChild(card);
+      }
+    }
+
+    async function loadCatalog(refreshCategories) {
+      if (!keyInput.value) {
+        setStatus("Escribe tu clave para ver el catálogo.", false);
+        return;
+      }
+      const query = activeCategory ? "?category=" + encodeURIComponent(activeCategory) : "";
+      try {
+        const response = await fetch("/products" + query,
+          {headers: {"X-API-Key": keyInput.value}});
+        if (response.status === 401) {
+          setStatus("Clave inválida", true);
+          return;
+        }
+        if (response.status === 429) {
+          const seconds = response.headers.get("Retry-After") || "unos";
+          setStatus("Demasiadas peticiones; espera " + seconds + " segundos", true);
+          return;
+        }
+        if (!response.ok) {
+          setStatus("No se pudo cargar el catálogo (error " + response.status + ").", true);
+          return;
+        }
+        const data = await response.json();
+        // Los conteos de la columna de categorías salen de la lista completa.
+        if (!activeCategory) allProducts = data.products;
+        renderCategories(data.categories);
+        renderProducts(data.products);
+      } catch (error) {
+        setStatus("No hay conexión con el servicio. Intenta de nuevo.", true);
+      }
+    }
+
     function addMessage(kind, text, tools) {
-      const box = document.createElement("div");
-      box.className = "msg " + kind;
-      const body = document.createElement("div");
-      body.textContent = text;
-      box.appendChild(body);
+      const box = element("div", "msg " + kind);
+      box.appendChild(element("div", "", text));
       if (tools && tools.length) {
-        const info = document.createElement("div");
-        info.className = "tools";
-        info.textContent = "Herramientas usadas: " + tools.join(", ");
-        box.appendChild(info);
+        box.appendChild(element("div", "tools", "Herramientas usadas: " + tools.join(", ")));
       }
       conversation.appendChild(box);
+      conversation.scrollTop = conversation.scrollHeight;
     }
 
     document.getElementById("form").addEventListener("submit", async (event) => {
@@ -74,8 +313,7 @@
         }
         if (response.status === 429) {
           const seconds = response.headers.get("Retry-After") || "unos";
-          addMessage("error", "Demasiadas preguntas; espera " + seconds
-            + " segundos");
+          addMessage("error", "Demasiadas preguntas; espera " + seconds + " segundos");
           return;
         }
         if (!response.ok) {
@@ -94,6 +332,8 @@
         addMessage("error", "No hay conexión con el servicio. Intenta de nuevo.");
       }
     });
+
+    loadCatalog(true);
   </script>
 </body>
 </html>

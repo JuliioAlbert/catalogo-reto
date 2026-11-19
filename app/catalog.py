@@ -50,6 +50,30 @@ class Catalog:
             if e.get("category", "").casefold() == wanted
         ]
 
+    def list_products(self, category=None, status=None, in_stock=None) -> list:
+        """Lista productos con filtros opcionales.
+
+        :param category: Categoría, sin distinguir mayúsculas; ``None`` para todas.
+        :type category: str or None
+        :param status: ``activo`` o ``descontinuado``; ``None`` para ambos.
+        :type status: str or None
+        :param in_stock: ``True`` solo con existencias, ``False`` solo agotados.
+        :type in_stock: bool or None
+        :return: Productos que cumplen todos los filtros dados.
+        :rtype: list[dict]
+        """
+        wanted = str(category).strip().casefold() if category else None
+        found = []
+        for product in self._products:
+            if wanted and product.get("category", "").casefold() != wanted:
+                continue
+            if status and product.get("status") != status:
+                continue
+            if in_stock is not None and (product.get("stock", 0) > 0) != in_stock:
+                continue
+            found.append(dict(product))
+        return found
+
     def categories(self) -> list:
         """Nombres de las categorías que existen en los datos.
 

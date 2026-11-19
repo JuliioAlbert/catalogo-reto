@@ -22,3 +22,4 @@ muestra el valor de una clave.
 | `PII_MODE` es `redact` o `block`; otro valor impide arrancar | `app/config.py`, `load_config` | `tests/test_output_validation.py` |
 | La respuesta del modelo no se entrega vacía, larga ni con datos personales (`output_rejected`) | `app/output.py`; `app/main.py`, `_checked_answer` | `tests/test_output_validation.py` |
 | La auditoría `pii_detected` guarda tipos y cliente, nunca el valor | `app/main.py` | `tests/test_output_validation.py` (busca el valor en el log) |
+| `/products` exige `X-API-Key`, cuenta contra el límite y audita cada consulta | `app/main.py`, `list_products` | `tests/test_products_api.py` y `e2e/test_catalog_view.py` |

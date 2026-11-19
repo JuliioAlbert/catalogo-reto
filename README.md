@@ -41,6 +41,8 @@ Abre `http://localhost:8000/`. Pruebas, desde `product/`: `pytest`.
 
 - `GET /`: página web.
 - `GET /health`: `{status, pid}`.
+- `GET /products?category=&status=&in_stock=`: `{products, categories}` con filtros opcionales; exige
+  `X-API-Key`, no usa el modelo (ADR 0015).
 - `POST /ask`: `{question, history?}` devuelve `{request_id, answer, steps,
   tools_used, input_tokens, output_tokens, model, route, cached_calls,
   cost_usd}`. Si el gateway falla responde `502 {"detail": "model

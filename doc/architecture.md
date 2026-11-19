@@ -21,6 +21,8 @@ flowchart LR
     M -->|requests, errores, tokens, cost_usd| X[metrics.py]
     M -->|GET /metrics con clave| X
     M -->|pregunta| R[router.py small o large]
+    W -->|GET /products con X-API-Key| M
+    M -->|list_products| D
     M --> A[agent.py bucle con tope y ventana]
     A -->|agent_run, audit con client| E
     A -->|complete messages, model| L[llm.py interfaz Completion]
@@ -68,3 +70,4 @@ flowchart LR
 - ADR 0012: compliance como comprobación que impide arrancar en producción.
 - ADR 0013: datos personales enmascarados o bloqueados en entrada y salida.
 - ADR 0014: validación de la respuesta del modelo antes de entregarla.
+- ADR 0015: endpoint `/products` para la vista visual del catálogo.

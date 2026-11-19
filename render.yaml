@@ -1,7 +1,7 @@
 # Blueprint de Render. El nombre del servicio es igual al del repositorio.
 services:
   - type: web
-    name: product-catalog
+    name: catalogo-reto
     runtime: docker
     plan: free
     healthCheckPath: /health

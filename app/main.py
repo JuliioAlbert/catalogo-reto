@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Callable, List, Literal, Optional
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field, field_validator
 
@@ -236,6 +236,24 @@ def create_app(  # pylint: disable=too-many-locals
     def get_metrics():
         """Peticiones, latencia p50 y p95, tokens y veredicto del SLO."""
         return metrics.snapshot()
+
+    @application.get("/products", dependencies=[Depends(guard)])
+    def list_products(
+        request: Request,
+        category: Optional[str] = Query(default=None, max_length=50),
+        status: Optional[Literal["activo", "descontinuado"]] = None,
+        in_stock: Optional[bool] = None,
+    ):
+        """Productos del catálogo con filtros; no pasa por el modelo."""
+        events.emit(
+            "audit", request.state.request_id, client=request.state.client,
+            action="list_products", category=category, status=status,
+            in_stock=in_stock,
+        )
+        return {
+            "products": catalog.list_products(category, status, in_stock),
+            "categories": catalog.categories(),
+        }
 
     @application.get("/", include_in_schema=False)
     def home():

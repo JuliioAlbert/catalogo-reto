@@ -35,3 +35,11 @@ def test_home_page_has_test_ids_and_never_uses_inner_html(client):
     assert "innerHTML" not in page
     assert "textContent" in page
     assert (PRODUCT_DIR / "app" / "static" / "index.html").is_file()
+
+
+def test_home_page_has_the_catalog_view_test_ids(client):
+    page = client.get("/").text
+    for test_id in ("catalog-grid", "category-filter", "catalog-status"):
+        assert f'data-testid="{test_id}"' in page
+    assert "product-card" in page
+    assert "/products" in page
