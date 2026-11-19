@@ -212,7 +212,7 @@ def load_config(env: Mapping[str, str]) -> Config:
             raise ValueError(f"MODEL_PROVIDER=gateway needs {', '.join(missing)}")
     return Config(
         model_provider=provider,
-        agent_max_steps=_positive_int(env, "AGENT_MAX_STEPS", 3),
+        agent_max_steps=_positive_int(env, "AGENT_MAX_STEPS", 5),
         max_question_chars=_positive_int(env, "MAX_QUESTION_CHARS", 2000),
         products_path=Path(path),
         slo_p95_ms=_positive_int(env, "SLO_P95_MS", 2000),

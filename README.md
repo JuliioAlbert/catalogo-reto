@@ -123,7 +123,7 @@ los mismos tokens de entrada a la línea base y a las palancas.
 | `MODEL_TEMPERATURE` | `0` | Temperatura; con 0 las evaluaciones se repiten. |
 | `CACHE_TTL_SECONDS` | `0` | Caché del gateway en segundos (0: apagada). |
 | `PRICES_PATH` | `data/model_prices.json` | Precios por modelo. |
-| `AGENT_MAX_STEPS` | `3` | Tope de vueltas del agente (>= 1). |
+| `AGENT_MAX_STEPS` | `5` | Tope de vueltas del agente (>= 1). |
 | `MAX_QUESTION_CHARS` | `2000` | Largo máximo de la pregunta (>= 1). |
 | `PRODUCTS_PATH` | `data/products.json` | Archivo de productos. |
 | `SLO_P95_MS` | `2000` | Objetivo de latencia p95 en milisegundos (>= 1). |

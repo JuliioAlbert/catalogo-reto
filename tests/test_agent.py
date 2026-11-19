@@ -44,3 +44,25 @@ def test_reaching_the_step_cap_returns_the_exact_message(catalog):
     assert field(result, "answer") == CAP_MESSAGE
     assert field(result, "steps") == 2
     assert len(model.calls) == 2
+
+
+def test_two_tool_calls_in_one_reply_run_the_first_and_keep_going(catalog):
+    glued = (
+        tool_call("get_product", product_id="PRD-0002")
+        + "\n\n"
+        + tool_call("get_product", product_id="PRD-0005")
+    )
+    model = ScriptedModel(
+        glued,
+        tool_call("get_product", product_id="PRD-0005"),
+        final_answer("listo"),
+    )
+    result = build_agent(catalog, model).run("Precio de PRD-0002 y PRD-0005")
+    assert field(result, "answer") == "listo"
+    assert list(field(result, "tools_used")) == ["get_product", "get_product"]
+    assert field(result, "steps") == 3
+
+
+def test_text_after_the_first_json_object_is_ignored(catalog):
+    model = ScriptedModel(final_answer("Hola") + " gracias")
+    assert field(build_agent(catalog, model).run("Hola"), "answer") == "Hola"

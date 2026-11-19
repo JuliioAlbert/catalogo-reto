@@ -8,7 +8,7 @@ from app.config import load_config
 def test_defaults_are_used_when_nothing_is_set():
     config = load_config({})
     assert config.model_provider == "fake"
-    assert config.agent_max_steps == 3
+    assert config.agent_max_steps == 5
     assert config.max_question_chars == 2000
     assert str(config.products_path).endswith("data/products.json")
 

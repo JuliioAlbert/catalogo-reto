@@ -222,8 +222,10 @@ class Agent:
         :return: ``(respuesta, None)`` si terminó o ``(None, texto)`` si no.
         """
         try:
-            payload = json.loads(reply)
-        except (TypeError, ValueError):
+            # Solo el primer objeto JSON: algunos modelos pegan varias llamadas
+            # en un mensaje; se ejecuta la primera y el modelo pide la siguiente.
+            payload, _end = json.JSONDecoder().raw_decode(reply.lstrip())
+        except (AttributeError, TypeError, ValueError):
             return None, "error: la respuesta del modelo no es JSON válido"
         if not isinstance(payload, dict):
             return None, "error: la respuesta del modelo no es un objeto JSON"
