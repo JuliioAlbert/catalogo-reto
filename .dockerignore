@@ -1,0 +1,26 @@
+# Secretos
+.env
+.env.*
+
+# Pruebas y herramientas: no van en la imagen
+tests/
+e2e/
+scripts/
+doc/
+.github/
+
+# Cachés y entornos
+__pycache__/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.pylint.d/
+.venv/
+.coverage
+htmlcov/
+
+# Control de versiones
+.git/
+.gitignore
+Dockerfile
+.dockerignore

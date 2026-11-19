@@ -1,0 +1,14 @@
+[
+  {"id": "PRD-0001", "name": "Laptop Pro 14", "category": "Electrónica", "price_mxn": 18999, "stock": 12, "status": "activo", "description": "Laptop de 14 pulgadas con 16 GB de memoria"},
+  {"id": "PRD-0002", "name": "Licuadora Turbo", "category": "Hogar", "price_mxn": 1299, "stock": 40, "status": "activo", "description": "Licuadora de 1000 W con jarra de vidrio"},
+  {"id": "PRD-0003", "name": "Teléfono Básico", "category": "Electrónica", "price_mxn": 899, "stock": 0, "status": "descontinuado", "description": "Teléfono sencillo con batería de larga duración"},
+  {"id": "PRD-0004", "name": "Audífonos Studio", "category": "Electrónica", "price_mxn": 2499, "stock": 25, "status": "activo", "description": "Audífonos inalámbricos con cancelación de ruido"},
+  {"id": "PRD-0005", "name": "Silla Ergonómica", "category": "Oficina", "price_mxn": 3899, "stock": 8, "status": "activo", "description": "Silla con soporte lumbar ajustable"},
+  {"id": "PRD-0006", "name": "Escritorio Elevable", "category": "Oficina", "price_mxn": 6499, "stock": 5, "status": "activo", "description": "Escritorio eléctrico con altura regulable"},
+  {"id": "PRD-0007", "name": "Cafetera Express", "category": "Hogar", "price_mxn": 2199, "stock": 18, "status": "activo", "description": "Cafetera de 15 bares con vaporizador"},
+  {"id": "PRD-0008", "name": "Balón de Fútbol", "category": "Deportes", "price_mxn": 499, "stock": 60, "status": "activo", "description": "Balón profesional número 5"},
+  {"id": "PRD-0009", "name": "Bicicleta de Montaña", "category": "Deportes", "price_mxn": 8999, "stock": 3, "status": "activo", "description": "Bicicleta de aluminio con 21 velocidades"},
+  {"id": "PRD-0010", "name": "Tapete de Yoga", "category": "Deportes", "price_mxn": 349, "stock": 0, "status": "descontinuado", "description": "Tapete antiderrapante de 6 mm"},
+  {"id": "PRD-0011", "name": "Lámpara de Escritorio", "category": "Oficina", "price_mxn": 599, "stock": 30, "status": "activo", "description": "Lámpara LED con tres niveles de brillo"},
+  {"id": "PRD-0012", "name": "Aspiradora Robot", "category": "Hogar", "price_mxn": 5499, "stock": 9, "status": "activo", "description": "Aspiradora con mapeo y regreso a la base"}
+]
